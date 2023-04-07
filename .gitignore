@@ -1,0 +1,5 @@
+/rani_env
+*.DS_Store
+/data/trained_model
+/src/output*
+*pycache*

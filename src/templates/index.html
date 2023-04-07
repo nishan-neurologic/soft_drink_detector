@@ -1,0 +1,144 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Object Detection</title>
+</head>
+<body>
+    <h1>Upload an Image</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="file" id="file-input" accept="image/*" required>
+        <br><br>
+        <input type="submit" value="Predict">
+    </form>
+    <h2>Predicted Image:</h2>
+    <div style="display: flex;">
+        <img id="output-image" src="" alt="Predicted image will be displayed here." style="display:none">
+        <div id="detected-info" style="margin-left: 20px; display:none;">
+            <h3>Detected Information:</h3>
+            <ul id="detected-list"></ul>
+        </div>
+    </div>
+    <script>
+document.getElementById('upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById('file-input');
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    const response = await fetch('http://127.0.0.1:5000/predict', {
+        method: 'POST',
+        body: formData
+    });
+
+    const data = await response.json();
+    const outputImage = document.getElementById('output-image');
+    outputImage.src = 'data:image/jpeg;base64,' + data.image;
+    outputImage.style.display = 'block';
+
+    const detectedInfo = document.getElementById('detected-info');
+    const detectedList = document.getElementById('detected-list');
+    detectedList.innerHTML = '';
+    // Update this line to use 'label_info' instead of 'detected_results'
+    data.label_info.forEach(result => {
+        const li = document.createElement('li');
+        li.textContent = `Class: ${result.class}, Confidence: ${result.confidence}, Bounding Box: [${result.bounding_box}]`;
+        detectedList.appendChild(li);
+    });
+    detectedInfo.style.display = 'block';
+});
+
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Object Detection</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .column {
+            flex: 1;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload an Image</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="file" id="file-input" accept="image/*" required>
+        <br><br>
+        <input type="submit" value="Predict">
+    </form>
+    <div class="container">
+        <div class="column">
+            <h2>Predicted Image:</h2>
+            <img id="output-image" src="" alt="Predicted image will be displayed here." style="display:none; width: 100%;">
+        </div>
+        <div class="column">
+            <h2>Detected Information:</h2>
+            <table id="detected-table" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Confidence</th>
+                        <th>Bounding Box</th>
+                    </tr>
+                </thead>
+                <tbody id="detected-tbody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+document.getElementById('upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById('file-input');
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    const response = await fetch('http://127.0.0.1:5000/predict', {
+        method: 'POST',
+        body: formData
+    });
+
+    const data = await response.json();
+    const outputImage = document.getElementById('output-image');
+    outputImage.src = 'data:image/jpeg;base64,' + data.image;
+    outputImage.style.display = 'block';
+
+    const detectedTable = document.getElementById('detected-table');
+    const detectedTbody = document.getElementById('detected-tbody');
+    detectedTbody.innerHTML = '';
+    data.label_info.forEach(result => {
+        const tr = document.createElement('tr');
+        const classTd = document.createElement('td');
+        const confidenceTd = document.createElement('td');
+        const bboxTd = document.createElement('td');
+        classTd.textContent = result.class;
+        confidenceTd.textContent = result.confidence;
+        bboxTd.textContent = `[${result.bounding_box}]`;
+        tr.appendChild(classTd);
+        tr.appendChild(confidenceTd);
+        tr.appendChild(bboxTd);
+        detectedTbody.appendChild(tr);
+    });
+    detectedTable.style.display = 'block';
+});
+    </script>
+</body>
+</html>
